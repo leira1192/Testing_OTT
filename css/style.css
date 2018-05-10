@@ -4,8 +4,8 @@
 
 body {
 	background-color:#000000;
-	width: 1920px; /*1280px 650px for testing*/
-	height: 1080px;
+	width: 1280px; /*1280px 650px for testing*/
+	height: 650px;
 	margin: 0px;
 }
 
@@ -40,15 +40,6 @@ body {
 	color: white;
 
 }
-
-/* 
-#main_img{
-	position: absolute;
-	margin-left: 50%;
-	width: 48%;
-	height: 88%;
-	background-color: aqua;
-} */
 
 #main_nav{
 	width: 96%;

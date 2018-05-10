@@ -6,7 +6,6 @@ var keys = {};
 var content_api = [];
 var click_item_focus_testing = 0;
 loadApiContent();
-
 //DO ALL WHILE WINDOW ON
 window.onload = function () {
 	video_player = document.getElementById('new_video');
@@ -79,6 +78,9 @@ function onKeyDownPress(e) {
 			}
 			console.log('return');
 			break;
+		case this.tvKey.EXIT://10182
+			window.tizen.application.getCurrentApplication().exit();
+			break;
 		case this.tvKey.UP: //38
 			console.log('Up');
 			break;
@@ -116,6 +118,9 @@ function onKeyDownPress(e) {
 			this.video_player.currentTime += 5;
 			this.video_player.play();
 			console.log('Fastforward');
+			break;
+		case this.tvKey.REC:
+			console.log('Rec');
 			break;
 		case this.tvKey.STOP: //413
 			if (document.getElementById('new_video').style.display === 'block') {
@@ -223,7 +228,7 @@ function loadinfo_actual(item_focus) {
 	console.log('Show Content Actualizado');
 }
 
-//CREATE ANOTHER VIDEO
+//CREATE VIDEO
 function video_load_() {
 	document.getElementById('new_video').style.display = 'none';
 	if (Hls.isSupported()) {
@@ -234,6 +239,7 @@ function video_load_() {
 		// hls.loadSource('https://www.w3schools.com/html/mov_bbb.mp4');
 		hls.attachMedia(video_player);
 		hls.on(Hls.Events.MANIFEST_PARSED, function () {
+			video_player.preload = 'auto';
 			console.log('Load video complete, ready to play');
 		});
 	} else if (video_player.canPlayType('application/vnd.apple.mpegurl')) {
@@ -242,6 +248,7 @@ function video_load_() {
 		// video_player.src = 'https://www.w3schools.com/html/mov_bbb.mp4';
 		video_player.addEventListener('canplay', function () {
 			console.log('Load video complete, ready to play, version src');
+			video_player.preload = 'auto';
 		});
 	}
 }
