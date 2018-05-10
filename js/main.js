@@ -1,12 +1,11 @@
 //inicializar Variables
-console.log('Ya valimos mil madres');
+console.log('Iniciando');
 loadApiContent();
 var actualTime;
 var keys = {};
 var content_api = [];
 var click_item_focus_testing = 0;
 var successCallback = function () {
-	console.log('successCallback its ok');
 };
 var errorCallback = function () {
 	console.log('errorCallback hubo un error');
@@ -71,7 +70,7 @@ var listener = {
 	}
 };
 
-
+//REGISTRO DE KEYS SUPPORTED
 function registerKeys() {
 	var supportedKeys = tizen.tvinputdevice.getSupportedKeys(), i = 0;
 	for (i = 0; i < supportedKeys.length; i++) {
@@ -81,21 +80,21 @@ function registerKeys() {
 			console.error('failed to register' + supportedKeys[i].name, e);
 		}
 		keys[supportedKeys[i].code] = supportedKeys[i].name;
-		console.log('registro ' + i + ': complete' + keys + ',  keys storage: name:' + keys[supportedKeys[i].code] + ', code: ' + supportedKeys[i].code);
+		//console.log('registro ' + i + ': complete' + keys + ',  keys storage: name:' + keys[supportedKeys[i].code] + ', code: ' + supportedKeys[i].code);
 	}
-	console.log('keys registers');
-	for (var j = 0; j < keys.length; j++) {
-		console.log(keys[j]);
+	if (keys.length !== 0) {
+		console.log('Keys Cargadas y Online');
 	}
 
 }
 
+//LISTENING EVENT
 function bindEvents() {
 	// document.addEventListener('tizenhwkey', onDeviceHardwareKeyPress);
 	window.addEventListener('keydown', onKeyDownPress);
-	console.log('online blind event');
 }
 
+//RUN EVENT KEYDOWN
 function onKeyDownPress(e) {
 	console.log('press key');
 	console.log(e.keyCode);
@@ -157,7 +156,7 @@ function onKeyDownPress(e) {
 			break;
 		case this.tvKey.RIGHT: //39
 			console.log('Right');
-			if (this.click_item_focus_testing === this.content_api.length-1) {
+			if (this.click_item_focus_testing === this.content_api.length - 1) {
 				console.log('No hay más items a la derecha');
 			} else {
 				click_item_focus_testing += 1;
@@ -209,21 +208,19 @@ function onKeyDownPress(e) {
 	console.log('end press button');
 }
 
+//CARGAR API JSON, ORDENAR E INSERTAR EN ESTRUCTURA
 function loadApiContent() {
-	console.log('entramos al request');
 	var xhr = new XMLHttpRequest();
 	var url = 'http://api.tvmaze.com/shows/1/episodes';
 	xhr.onreadystatechange = function () {
 		if (this.readyState === 4 && this.status === 200) {
-			console.log('listo para hacer maravillas');
+			console.log('Request Ready');
 		}
 	};
 	xhr.open('GET', url, true);
 	xhr.send();
-	console.log('se ha cargado el json?');
 	xhr.onload = function () {
 		if (this.status === 200) {
-			console.log('llegamos a la entrada del json');
 			var content = JSON.parse(this.responseText);
 			// var output = '';
 			content.forEach(function (elemento) {
@@ -256,18 +253,6 @@ function loadApiContent() {
 				structure_api.summary = elemento.summary;
 				structure_api.link_episode = elemento._links.self.href;
 				this.content_api.push(structure_api);
-				// output += 'ID: ' + elemento.id + '\n ' +
-				// 	'URL: ' + elemento.url + '\n ' +
-				// 	'NAME: ' + elemento.name + '\n ' +
-				// 	'SEASON: ' + elemento.season + '\n ' +
-				// 	'NUMBER: ' + elemento.number + '\n ' +
-				// 	'AIRDATE: ' + elemento.airdate + '\n ' +
-				// 	'AIRTIME: ' + elemento.airtime + '\n ' +
-				// 	'RUNTIME: ' + elemento.runtime + '\n ' +
-				// 	'IMAGE: ' + elemento.image.medium + '\n ' +
-				// 	'IMAGE: ' + elemento.image.original + '\n ' +
-				// 	'SUMMARY: ' + elemento.summary + '\n ' +
-				// 	'LINKS: ' + elemento._links.self.href + '\n ';
 			});
 			console.log(this.responseText);
 			console.log(content_api);
@@ -295,14 +280,5 @@ function loadinfo_actual(item_focus) {
 	setBackground_ += '\')';
 	console.log(setBackground_);
 	document.getElementById('main_api').style.backgroundImage = setBackground_;
-	// var item_focus_info = document.getElementById('main_info');
-	// item_focus_info.style.color = '#FFFFFF';
-	// var html_change = `
-	// <h1>Under The Dome</h1></br>
-	// <h2>${content_api[item_focus].name}</h2>
-	// <h4>Chapter: ${content_api[item_focus].number} </br>
-	// Season: ${content_api[item_focus].season}</h4> </br>`;
-	// console.log(html_change);
-	// item_focus_info.appendChild(html_change);
 	console.log('exito');
 }
