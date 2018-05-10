@@ -1,53 +1,20 @@
 //inicializar Variables
 console.log('Iniciando');
+var video_player;
 var actualTime;
 var keys = {};
 var content_api = [];
 var click_item_focus_testing = 0;
 loadApiContent();
 
-
-//CREATE ANOTHER VIDEO
-function video_load_() {
-	document.getElementById('main').style.display = 'none';
-	var video_player = document.getElementById('new_video');
-	if (Hls.isSupported()) {
-		console.log('video soportado');
-		var hls = new Hls();
-		// bind them together
-		console.log('creado de variable');
-		hls.loadSource('https://freeform.azureedge.net/showms/2018/96/ed13e7ee-4ace-465e-ade9-7fbe3623e93d.m3u8');
-		// hls.loadSource('https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8');
-		// hls.loadSource('https://www.w3schools.com/html/mov_bbb.mp4');
-		hls.attachMedia(video_player);
-		console.log('video atado');
-		hls.on(Hls.Events.MANIFEST_PARSED, function () {
-			video_player.play();
-			console.log('Soportó el play');
-		});
-	} else if (video_player.canPlayType('application/vnd.apple.mpegurl')) {
-		video_player.src = 'https://freeform.azureedge.net/showms/2018/96/ed13e7ee-4ace-465e-ade9-7fbe3623e93d.m3u8';
-		// video_player.src = 'https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8';
-		// video_player.src = 'https://www.w3schools.com/html/mov_bbb.mp4';
-		console.log('No pudo soportar, pero se intenta');
-		video_player.addEventListener('canplay', function () {
-			video_player.play();
-			console.log('se puede reproducir a pesar de')
-		});
-	}
-}
-
-//LLAMADO EXITOSO
-var successCallback = function () {
-};
-
-//ERROR EN CALLBACK
-var errorCallback = function () {
-	console.log('errorCallback hubo un error');
-};
-
 //DO ALL WHILE WINDOW ON
 window.onload = function () {
+	video_player = document.getElementById('new_video');
+	console.log(video_player);
+	video_load_();
+	video_player.onplaying = function () {
+		console.log(video_player.currentTime + ' seconds');
+	};
 	//Create video object
 	console.log('entra al window onload');
 	// var objElem = document.createElement('object');
@@ -69,44 +36,9 @@ window.onload = function () {
 };
 
 //VAR LISTENER TO SET
-var listener = {
-	onbufferingstart: function (percent) {
-		console.log('Buffering start.' + percent);
-	},
-
-	onbufferingprogress: function (percent) {
-		console.log('Buffering progress data : ' + percent);
-	},
-
-	onbufferingcomplete: function () {
-		console.log('Buffering complete.');
-	},
-	onstreamcompleted: function () {
-		console.log('Stream Completed');
-		document.getElementById('new_video').style.display = 'none';
-		// webapis.avplay.stop();
-	},
-
-	oncurrentplaytime: function (currentTime) {
-		console.log('Current playtime: ' + currentTime);
-		actualTime = currentTime;
-	},
-
-	onerror: function (eventType) {
-		console.log('event type error : ' + eventType);
-	},
-
-	onevent: function (eventType, eventData) {
-		console.log('event type: ' + eventType + ', data: ' + eventData);
-	},
-
-	onsubtitlechange: function (duration, text, data3, data4) {
-		console.log('subtitleText: ' + text);
-	},
-	ondrmevent: function (drmEvent, drmData) {
-		console.log('DRM callback: ' + drmEvent + ', data: ' + drmData);
-	}
-};
+// function listener() {
+// 	console.log(video_player.currentTime + ' seconds');
+// }
 
 //REGISTRO DE KEYS SUPPORTED
 function registerKeys() {
@@ -130,8 +62,8 @@ function registerKeys() {
 function bindEvents() {
 	// document.addEventListener('tizenhwkey', onDeviceHardwareKeyPress);
 	window.addEventListener('keydown', onKeyDownPress);
+	console.log(this.video_player);
 }
-
 //RUN EVENT KEYDOWN
 function onKeyDownPress(e) {
 	console.log('press key');
@@ -204,18 +136,17 @@ function onKeyDownPress(e) {
 			}
 			break;
 		case this.tvKey.REWIND: //412
-			// webapis.avplay.jumpBackward(5000, successCallback, errorCallback);
-			// webapis.avplay.play();
-			document.getElementById('video_visible').style.display = 'block';
+			document.getElementById('new_video').style.display = 'block';
+			document.getElementById('main').style.display = 'none';
+			this.video_player.currentTime -= 5;
+			this.video_player.play();
 			console.log('Rewind');
 			break;
 		case this.tvKey.FASTFORWARD: //417
-			var newTime = actualTime + 5000;
-			console.log(actualTime);
-			console.log(newTime);
-			// webapis.avplay.seekTo(newTime, successCallback, errorCallback);
-			// webapis.avplay.play();
 			document.getElementById('new_video').style.display = 'block';
+			document.getElementById('main').style.display = 'none';
+			this.video_player.currentTime += 5;
+			this.video_player.play();
 			console.log('Fastforward');
 			break;
 		case this.tvKey.STOP: //413
@@ -223,6 +154,8 @@ function onKeyDownPress(e) {
 				document.getElementById('new_video').style.display = 'none';
 				document.getElementById('main').style.display = 'block';
 				// webapis.avplay.stop();
+				this.video_player.pause();
+				this.video_player.currentTime = '0.0';
 				console.log('Stop');
 			} else {
 			}
@@ -233,14 +166,19 @@ function onKeyDownPress(e) {
 				document.getElementById('new_video').style.display = 'block';
 				document.getElementById('main').style.display = 'none';
 				// webapis.avplay.play();
-				this.video_load_();
+				this.video_player.play();
+				console.log(video_player.currentTime + 'seconds');
 				console.log('Play');
 			} else {
+				this.video_player.play();
+				console.log(video_player.currentTime + 'seconds');
+				console.log('Play');
 			}
 			break;
 		case this.tvKey.PAUSE: // 19
 			// webapis.avplay.pause();
 			this.video_player.pause();
+			console.log(video_player.currentTime + 'seconds');
 			console.log('Pause');
 			break;
 		default:
@@ -332,3 +270,45 @@ if (true) {
 	console.log('debería de mostrar esto');
 }
 console.log('antes de nuevo video');
+
+//CREATE ANOTHER VIDEO
+function video_load_() {
+	console.log(video_player);
+	document.getElementById('new_video').style.display = 'none';
+	if (Hls.isSupported()) {
+		console.log('video soportado');
+		var hls = new Hls();
+		// bind them together
+		console.log('creado de variable');
+		// hls.loadSource('https://freeform.azureedge.net/showms/2018/96/ed13e7ee-4ace-465e-ade9-7fbe3623e93d.m3u8');
+		hls.loadSource('https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8');
+		// hls.loadSource('https://www.w3schools.com/html/mov_bbb.mp4');
+		hls.attachMedia(video_player);
+		console.log('video atado');
+		hls.on(Hls.Events.MANIFEST_PARSED, function () {
+			console.log(Hls.Events.MANIFEST_PARSED);
+			// video_player.play();
+			console.log('Soportó el play');
+		});
+		// console.log(Hls.Events.MANIFEST_PARSED);
+		// video_player.play();
+	} else if (video_player.canPlayType('application/vnd.apple.mpegurl')) {
+		// video_player.src = 'https://freeform.azureedge.net/showms/2018/96/ed13e7ee-4ace-465e-ade9-7fbe3623e93d.m3u8';
+		video_player.src = 'https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8';
+		// video_player.src = 'https://www.w3schools.com/html/mov_bbb.mp4';
+		console.log('No pudo soportar, pero se intenta');
+		video_player.addEventListener('canplay', function () {
+			// video_player.play();
+			console.log('se puede reproducir a pesar de')
+		});
+	}
+}
+
+//LLAMADO EXITOSO
+var successCallback = function () {
+};
+
+//ERROR EN CALLBACK
+var errorCallback = function () {
+	console.log('errorCallback hubo un error');
+};
